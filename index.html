@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我们的约会时光 💖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .title-font {
+            font-family: 'Ma Shan Zheng', cursive;
+        }
+        
+        /* 漂浮爱心背景 */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 105, 135, 0.3);
+            animation: floatUp linear infinite;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 玻璃拟态卡片 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(255, 105, 135, 0.15);
+        }
+        
+        /* 导航栏 */
+        .nav-item {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #ff6b9d;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .nav-item:hover::after,
+        .nav-item.active::after {
+            width: 100%;
+        }
+        
+        /* 时间数字 */
+        .time-number {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 相识日专属渐变 */
+        .meet-number {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 心愿卡片 */
+        .wish-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .wish-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 105, 135, 0.25);
+        }
+        
+        .wish-card.completed {
+            opacity: 0.7;
+        }
+        
+        .wish-card.completed .wish-title {
+            text-decoration: line-through;
+            color: #999;
+        }
+        
+        /* 相册图片 */
+        .photo-item {
+            overflow: hidden;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        
+        .photo-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .photo-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        /* 情话卡片 */
+        .love-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .love-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            font-size: 120px;
+            color: rgba(255, 107, 157, 0.1);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        
+        /* 淡入动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 打字机效果 */
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #ff6b9d;
+            white-space: nowrap;
+            animation: typing 3.5s steps(30, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #ff6b9d }
+        }
+        
+        /* 按钮样式 */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.5);
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #ff6b9d, #c44569);
+            border-radius: 4px;
+        }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        /* 日期选择器 */
+        input[type="date"] {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 107, 157, 0.3);
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: #c44569;
+            font-family: inherit;
+        }
+        
+        /* 标签页 */
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 悬浮音乐播放器 */
+        .music-player {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            width: 280px;
+            transition: all 0.4s ease;
+        }
+
+        .music-player.collapsed {
+            width: 60px;
+            border-radius: 50%;
+            padding: 0;
+        }
+
+        /* 收起时整体旋转 */
+        .music-player.collapsed.playing {
+            animation: rotateWhole 8s linear infinite;
+        }
+
+        @keyframes rotateWhole {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .record-disc {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        /* 展开状态下唱片旋转 */
+        .music-player:not(.collapsed).playing .record-disc {
+            animation: rotateDisc 8s linear infinite;
+        }
+
+        @keyframes rotateDisc {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .music-progress {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.4);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .music-progress::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff6b9d;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(255, 107, 157, 0.5);
+        }
+
+        .music-progress::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff6b9d;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(255, 107, 157, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- 漂浮爱心背景 -->
+    <div class="hearts-bg" id="heartsBg"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card mx-4 mt-4 px-6 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="title-font text-2xl text-rose-500">💕 我们的小世界</h1>
+            <div class="hidden md:flex space-x-8 text-rose-600">
+                <a href="#home" class="nav-item active">首页</a>
+                <a href="#meetday" class="nav-item">相识日</a>
+                <a href="#countdown" class="nav-item">纪念日</a>
+                <a href="#wishes" class="nav-item">心愿清单</a>
+                <a href="#gallery" class="nav-item">甜蜜相册</a>
+                <a href="#words" class="nav-item">情话墙</a>
+                <a href="#date" class="nav-item">约会计划</a>
+            </div>
+            <button class="md:hidden text-rose-500 text-xl" onclick="toggleMenu()">☰</button>
+        </div>
+    </nav>
+    
+    <!-- 移动端菜单 -->
+    <div id="mobileMenu" class="fixed top-20 left-4 right-4 z-40 glass-card p-4 hidden">
+        <div class="flex flex-col space-y-3 text-rose-600">
+            <a href="#home" class="py-2 border-b border-rose-200" onclick="toggleMenu()">首页</a>
+            <a href="#meetday" class="py-2 border-b border-rose-200" onclick="toggleMenu()">相识日</a>
+            <a href="#countdown" class="py-2 border-b border-rose-200" onclick="toggleMenu()">纪念日</a>
+            <a href="#wishes" class="py-2 border-b border-rose-200" onclick="toggleMenu()">心愿清单</a>
+            <a href="#gallery" class="py-2 border-b border-rose-200" onclick="toggleMenu()">甜蜜相册</a>
+            <a href="#words" class="py-2 border-b border-rose-200" onclick="toggleMenu()">情话墙</a>
+            <a href="#date" class="py-2" onclick="toggleMenu()">约会计划</a>
+        </div>
+    </div>
+
+    <!-- 首页 Hero -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative pt-20 px-4">
+        <div class="text-center z-10 fade-in">
+            <div class="text-6xl mb-6 animate-bounce">💑</div>
+            <h2 class="title-font text-5xl md:text-7xl text-rose-600 mb-4">
+                和你在一起
+            </h2>
+            <p class="text-xl md:text-2xl text-rose-500 mb-2 typewriter inline-block">
+                每一天都是最浪漫的约会
+            </p>
+            <p class="text-rose-400 mt-6 mb-8 max-w-md mx-auto">
+                记录我们的点点滴滴，收藏每一份心动瞬间。
+                愿我们的故事，永远写不完。
+            </p>
+            <button onclick="scrollToSection('meetday')" class="btn-primary text-lg">
+                开启我们的时光 ✨
+            </button>
+        </div>
+        
+        <!-- 装饰元素 -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-rose-400 animate-bounce">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- 相识日 -->
+    <section id="meetday" class="py-20 px-4 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <h3 class="title-font text-4xl text-pink-500 mb-3">🌸 初次相识</h3>
+                <p class="text-pink-400">故事开始的那一天...</p>
+            </div>
+            
+            <div class="glass-card p-8 md:p-12 fade-in">
+                <div class="flex justify-center items-center gap-4 mb-10">
+                    <label class="text-pink-500">第一次遇见的日子：</label>
+                    <input type="date" id="meetDate" value="2025-11-13" onchange="updateMeetCountdown()">
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                    <div class="glass-card p-6">
+                        <div class="meet-number text-5xl md:text-6xl font-bold" id="meetDays">0</div>
+                        <div class="text-pink-400 mt-2">天</div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="meet-number text-5xl md:text-6xl font-bold" id="meetHours">0</div>
+                        <div class="text-pink-400 mt-2">时</div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="meet-number text-5xl md:text-6xl font-bold" id="meetMinutes">0</div>
+                        <div class="text-pink-400 mt-2">分</div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="meet-number text-5xl md:text-6xl font-bold" id="meetSeconds">0</div>
+                        <div class="text-pink-400 mt-2">秒</div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <p class="text-pink-500 text-lg" id="meetMessage">
+                        感谢命运让我们相遇 🌷
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 恋爱倒计时 -->
+    <section id="countdown" class="py-20 px-4 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <h3 class="title-font text-4xl text-rose-600 mb-3">💝 恋爱纪念日</h3>
+                <p class="text-rose-400">我们已经一起走过了...</p>
+            </div>
+            
+            <div class="glass-card p-8 md:p-12 fade-in">
+                <div class="flex justify-center items-center gap-4 mb-10">
+                    <label class="text-rose-500">在一起的日子：</label>
+                    <input type="date" id="anniversaryDate" value="2026-05-19" onchange="updateCountdown()">
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                    <div class="glass-card p-6">
+                        <div class="time-number text-5xl md:text-6xl font-bold" id="days">0</div>
+                        <div class="text-rose-400 mt-2">天</div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="time-number text-5xl md:text-6xl font-bold" id="hours">0</div>
+                        <div class="text-rose-400 mt-2">时</div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="time-number text-5xl md:text-6xl font-bold" id="minutes">0</div>
+                        <div class="text-rose-400 mt-2">分</div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="time-number text-5xl md:text-6xl font-bold" id="seconds">0</div>
+                        <div class="text-rose-400 mt-2">秒</div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <p class="text-rose-500 text-lg" id="loveMessage">
+                        感谢你出现在我的生命里 💕
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 心愿清单 -->
+    <section id="wishes" class="py-20 px-4 relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <h3 class="title-font text-4xl text-rose-600 mb-3">📋 情侣心愿清单</h3>
+                <p class="text-rose-400">一起完成100件小事</p>
+            </div>
+            
+            <div class="glass-card p-6 mb-8 fade-in">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" id="wishInput" placeholder="写下一个新的心愿..." 
+                           class="flex-1 px-4 py-3 rounded-xl border border-rose-200 bg-white/50 focus:outline-none focus:border-rose-400 text-rose-600">
+                    <select id="wishCategory" class="px-4 py-3 rounded-xl border border-rose-200 bg-white/50 text-rose-600 focus:outline-none">
+                        <option value="date">约会</option>
+                        <option value="travel">旅行</option>
+                        <option value="food">美食</option>
+                        <option value="daily">日常</option>
+                        <option value="gift">礼物</option>
+                    </select>
+                    <button onclick="addWish()" class="btn-primary whitespace-nowrap">
+                        + 添加心愿
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mb-8 fade-in">
+                <div class="flex justify-between text-rose-500 mb-2">
+                    <span>完成进度</span>
+                    <span id="progressText">0 / 0</span>
+                </div>
+                <div class="h-3 bg-white/40 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-gradient-to-r from-rose-400 to-pink-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div id="wishList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- 心愿卡片将通过JS动态生成 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 甜蜜相册 -->
+    <section id="gallery" class="py-20 px-4 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <h3 class="title-font text-4xl text-rose-600 mb-3">📸 甜蜜相册</h3>
+                <p class="text-rose-400">珍藏每一个美好瞬间</p>
+            </div>
+            
+            <div class="glass-card p-6 mb-8 fade-in">
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <div class="flex-1 w-full">
+                        <label class="block w-full">
+                            <div class="border-2 border-dashed border-rose-300 rounded-xl p-8 text-center cursor-pointer hover:border-rose-500 hover:bg-rose-50/30 transition-all">
+                                <div class="text-4xl mb-2">🖼️</div>
+                                <p class="text-rose-500">点击或拖拽上传照片</p>
+                                <p class="text-rose-400 text-sm mt-1">支持 JPG, PNG 格式</p>
+                            </div>
+                            <input type="file" id="photoUpload" accept="image/*" multiple class="hidden" onchange="uploadPhotos(event)">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="photoGallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- 相片已全部移除 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 情话墙 -->
+    <section id="words" class="py-20 px-4 relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <h3 class="title-font text-4xl text-rose-600 mb-3">💌 情话墙</h3>
+                <p class="text-rose-400">把想说的话都藏在这里</p>
+            </div>
+            
+            <div class="glass-card p-6 mb-10 fade-in">
+                <textarea id="loveWordInput" rows="3" placeholder="写下你想对TA说的话..." 
+                          class="w-full px-4 py-3 rounded-xl border border-rose-200 bg-white/50 focus:outline-none focus:border-rose-400 text-rose-600 resize-none"></textarea>
+                <div class="flex justify-end mt-4">
+                    <button onclick="addLoveWord()" class="btn-primary">
+                        发布情话 💌
+                    </button>
+                </div>
+            </div>
+            
+            <div id="loveWordsList" class="grid md:grid-cols-2 gap-6">
+                <!-- 情话已全部移除 -->
+            </div>
+            
+            <div class="text-center mt-10">
+                <button onclick="showRandomLoveWord()" class="btn-primary">
+                    🎲 抽取一句随机情话
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 约会计划 -->
+    <section id="date" class="py-20 px-4 relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12 fade-in">
+                <h3 class="title-font text-4xl text-rose-600 mb-3">📅 约会计划</h3>
+                <p class="text-rose-400">策划下一次完美约会</p>
+            </div>
+            
+            <div class="flex justify-center gap-2 mb-8 fade-in">
+                <button class="tab-btn active px-6 py-2 rounded-full glass-card text-rose-600" onclick="switchTab('ideas')" id="tab-ideas">
+                    约会灵感
+                </button>
+                <button class="tab-btn px-6 py-2 rounded-full glass-card text-rose-600" onclick="switchTab('planner')" id="tab-planner">
+                    计划安排
+                </button>
+                <button class="tab-btn px-6 py-2 rounded-full glass-card text-rose-600" onclick="switchTab('spots')" id="tab-spots">
+                    地点推荐
+                </button>
+            </div>
+            
+            <!-- 约会灵感 -->
+            <div id="content-ideas" class="tab-content active">
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 wish-card">
+                        <div class="text-3xl mb-3">🎬</div>
+                        <h4 class="text-rose-600 font-semibold text-lg mb-2">电影院约会</h4>
+                        <p class="text-rose-400 text-sm">选一部双方都期待的电影，买一桶爆米花，享受黑暗中的甜蜜时光。</p>
+                    </div>
+                    <div class="glass-card p-6 wish-card">
+                        <div class="text-3xl mb-3">🌅</div>
+                        <h4 class="text-rose-600 font-semibold text-lg mb-2">看日出日落</h4>
+                        <p class="text-rose-400 text-sm">早起去山顶或海边看日出，或是傍晚散步看夕阳，浪漫又治愈。</p>
+                    </div>
+                    <div class="glass-card p-6 wish-card">
+                        <div class="text-3xl mb-3">🍳</div>
+                        <h4 class="text-rose-600 font-semibold text-lg mb-2">一起做饭</h4>
+                        <p class="text-rose-400 text-sm">在家一起研究新菜谱，分工合作，享受烟火气里的温馨。</p>
+                    </div>
+                    <div class="glass-card p-6 wish-card">
+                        <div class="text-3xl mb-3">🎮</div>
+                        <h4 class="text-rose-600 font-semibold text-lg mb-2">游戏厅/桌游</h4>
+                        <p class="text-rose-400 text-sm">抓娃娃、打电动或是玩桌游，在欢声笑语中拉近距离。</p>
+                    </div>
+                    <div class="glass-card p-6 wish-card">
+                        <div class="text-3xl mb-3">🌿</div>
+                        <h4 class="text-rose-600 font-semibold text-lg mb-2">公园野餐</h4>
+                        <p class="text-rose-400 text-sm">准备好吃的喝的，找一片草坪，晒太阳聊天，惬意又放松。</p>
+                    </div>
+                    <div class="glass-card p-6 wish-card">
+                        <div class="text-3xl mb-3">🎨</div>
+                        <h4 class="text-rose-600 font-semibold text-lg mb-2">DIY手作</h4>
+                        <p class="text-rose-400 text-sm">一起做陶艺、油画、香薰蜡烛，制作专属于两个人的纪念品。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 计划安排 -->
+            <div id="content-planner" class="tab-content">
+                <div class="glass-card p-8">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-rose-500 mb-2">约会日期</label>
+                            <input type="date" class="w-full px-4 py-3 rounded-xl border border-rose-200 bg-white/50 text-rose-600">
+                        </div>
+                        <div>
+                            <label class="block text-rose-500 mb-2">约会主题</label>
+                            <input type="text" placeholder="例如：一周年纪念日" class="w-full px-4 py-3 rounded-xl border border-rose-200 bg-white/50 text-rose-600 focus:outline-none focus:border-rose-400">
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-rose-500 mb-2">开始时间</label>
+                                <input type="time" class="w-full px-4 py-3 rounded-xl border border-rose-200 bg-white/50 text-rose-600">
+                            </div>
+                            <div>
+                                <label class="block text-rose-500 mb-2">结束时间</label>
+                                <input type="time" class="w-full px-4 py-3 rounded-xl border border-rose-200 bg-white/50 text-rose-600">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-rose-500 mb-2">行程安排</label>
+                            <textarea rows="5" placeholder="详细写下今天的行程..." class="w-full px-4 py-3 rounded-xl border border-rose-200 bg-white/50 text-rose-600 resize-none focus:outline-none focus:border-rose-400"></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn-primary">
+                                💾 保存约会计划
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 地点推荐 -->
+            <div id="content-spots" class="tab-content">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-card p-6 wish-card">
+                        <h4 class="text-rose-600 font-semibold text-lg mb-3">☕ 氛围感咖啡厅</h4>
+                        <ul class="text-rose-400 text-sm space-y-2">
+                            <li>• 适合安静聊天、看书</li>
+                            <li>• 拍照出片，环境舒适</li>
+                            <li>• 推荐下午时段前往</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card p-6 wish-card">
+                        <h4 class="text-rose-600 font-semibold text-lg mb-3">🍽️ 浪漫餐厅</h4>
+                        <ul class="text-rose-400 text-sm space-y-2">
+                            <li>• 纪念日首选西餐厅</li>
+                            <li>• 提前预约靠窗位置</li>
+                            <li>• 注意对方饮食偏好</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card p-6 wish-card">
+                        <h4 class="text-rose-600 font-semibold text-lg mb-3">🎡 游乐园/商场</h4>
+                        <ul class="text-rose-400 text-sm space-y-2">
+                            <li>• 一整天都不会无聊</li>
+                            <li>• 适合活泼好动的情侣</li>
+                            <li>• 晚上夜景也很好看</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card p-6 wish-card">
+                        <h4 class="text-rose-600 font-semibold text-lg mb-3">🌃 夜游散步</h4>
+                        <ul class="text-rose-400 text-sm space-y-2">
+                            <li>• 江边/湖边散步吹风</li>
+                            <li>• 牵手聊天增进感情</li>
+                            <li>• 省钱又浪漫的选择</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="py-10 text-center text-rose-400 relative z-10">
+        <p class="title-font text-2xl text-rose-500 mb-2">Made with 💖</p>
+        <p class="text-sm">愿天下有情人终成眷属</p>
+    </footer>
+
+    <!-- 悬浮音乐播放器 -->
+    <div class="music-player glass-card p-3" id="musicPlayer">
+        <div class="flex items-center gap-3">
+            <!-- 唱片图标 -->
+            <div class="record-disc" id="recordDisc" onclick="toggleMusic()">
+                🎵
+            </div>
+            
+            <!-- 右侧控制区 -->
+            <div class="flex-1 overflow-hidden" id="musicControls">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-rose-600 text-sm truncate" id="musicName">点击上传专属BGM</span>
+                    <button onclick="toggleMusicPanel()" class="text-rose-400 text-xs">收起</button>
+                </div>
+                <input type="range" class="music-progress" id="musicProgress" value="0" min="0" max="100" oninput="seekMusic(this.value)">
+                <div class="flex justify-between text-xs text-rose-400 mt-1">
+                    <span id="currentTime">00:00</span>
+                    <span id="totalTime">00:00</span>
+                </div>
+                <div class="flex items-center justify-between mt-2">
+                    <label class="text-xs text-rose-500 cursor-pointer hover:text-rose-600">
+                        📂 上传音乐
+                        <input type="file" accept="audio/*" class="hidden" onchange="uploadMusic(event)">
+                    </label>
+                    <div class="flex gap-2">
+                        <button onclick="toggleMusic()" class="text-rose-500 hover:text-rose-600" id="playBtn">▶️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div id="photoModal" class="modal" onclick="closeModal()">
+        <div class="max-w-4xl max-h-[90vh] p-4">
+            <img id="modalImage" src="" alt="" class="max-w-full max-h-[85vh] rounded-xl">
+        </div>
+    </div>
+
+    <!-- 随机情话弹窗 -->
+    <div id="loveWordModal" class="modal" onclick="closeLoveWordModal()">
+        <div class="glass-card p-10 max-w-lg mx-4 text-center">
+            <div class="text-5xl mb-6">💌</div>
+            <p id="randomLoveWord" class="text-xl text-rose-600 leading-relaxed"></p>
+            <button class="btn-primary mt-8" onclick="closeLoveWordModal()">
+                收到啦 💕
+            </button>
+        </div>
+    </div>
+
+    <!-- 音频元素 -->
+    <audio id="bgMusic" loop>
+
+    <script>
+        // ========== 初始化 ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingHearts();
+            updateMeetCountdown();
+            updateCountdown();
+            setInterval(() => {
+                updateMeetCountdown();
+                updateCountdown();
+            }, 1000);
+            initDefaultWishes();
+            initDefaultLoveWords();
+            initDefaultPhotos();
+            initScrollAnimations();
+            initSmoothScroll();
+            initMusicPlayer();
+        });
+
+        // ========== 漂浮爱心背景 ==========
+        function createFloatingHearts() {
+            const container = document.getElementById('heartsBg');
+            const hearts = ['💕', '💖', '💗', '💓', '💝', '🌸', '✨'];
+            
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                heart.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                heart.style.animationDelay = Math.random() * 10 + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        // ========== 移动端菜单 ==========
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // ========== 平滑滚动 ==========
+        function initSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ========== 滚动动画 ==========
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        }
+
+        // ========== 相识日计时 ==========
+        function updateMeetCountdown() {
+            const dateInput = document.getElementById('meetDate').value;
+            if (!dateInput) return;
+            
+            const meetDate = new Date(dateInput);
+            const now = new Date();
+            const diff = now - meetDate;
+            
+            if (diff < 0) {
+                document.getElementById('meetMessage').textContent = '期待相遇的那一天 🌷';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('meetDays').textContent = days;
+            document.getElementById('meetHours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('meetMinutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('meetSeconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        // ========== 恋爱倒计时 ==========
+        function updateCountdown() {
+            const dateInput = document.getElementById('anniversaryDate').value;
+            if (!dateInput) return;
+            
+            const startDate = new Date(dateInput);
+            const now = new Date();
+            const diff = now - startDate;
+            
+            if (diff < 0) {
+                document.getElementById('loveMessage').textContent = '期待那一天的到来 💫';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        // ========== 心愿清单 ==========
+        let wishes = JSON.parse(localStorage.getItem('loveWishes')) || [];
+        
+        const categoryIcons = {
+            date: '🌹',
+            travel: '✈️',
+            food: '🍜',
+            daily: '🏠',
+            gift: '🎁'
+        };
+        
+        function initDefaultWishes() {
+            if (wishes.length === 0) {
+                wishes = [
+                    { id: 1, text: '一起看一场浪漫的电影', category: 'date', completed: true },
+                    { id: 2, text: '去海边看一次日出', category: 'travel', completed: false },
+                    { id: 3, text: '一起做一顿烛光晚餐', category: 'food', completed: false },
+                    { id: 4, text: '养一只属于我们的小猫', category: 'daily', completed: false },
+                    { id: 5, text: '互送一份亲手制作的礼物', category: 'gift', completed: true },
+                    { id: 6, text: '去迪士尼乐园玩一整天', category: 'travel', completed: false },
+                ];
+                saveWishes();
+            }
+            renderWishes();
+        }
+        
+        function addWish() {
+            const input = document.getElementById('wishInput');
+            const category = document.getElementById('wishCategory').value;
+            const text = input.value.trim();
+            
+            if (!text) {
+                alert('请输入心愿内容~');
+                return;
+            }
+            
+            wishes.push({
+                id: Date.now(),
+                text: text,
+                category: category,
+                completed: false
+            });
+            
+            input.value = '';
+            saveWishes();
+            renderWishes();
+        }
+        
+        function toggleWish(id) {
+            const wish = wishes.find(w => w.id === id);
+            if (wish) {
+                wish.completed = !wish.completed;
+                saveWishes();
+                renderWishes();
+            }
+        }
+        
+        function deleteWish(id) {
+            wishes = wishes.filter(w => w.id !== id);
+            saveWishes();
+            renderWishes();
+        }
+        
+        function saveWishes() {
+            localStorage.setItem('loveWishes', JSON.stringify(wishes));
+        }
+        
+        function renderWishes() {
+            const container = document.getElementById('wishList');
+            container.innerHTML = '';
+            
+            wishes.forEach(wish => {
+                const card = document.createElement('div');
+                card.className = `wish-card glass-card p-5 ${wish.completed ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <button onclick="toggleWish(${wish.id})" 
+                                class="mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all
+                                ${wish.completed ? 'bg-rose-400 border-rose-400 text-white' : 'border-rose-300 hover:border-rose-500'}">
+                            ${wish.completed ? '✓' : ''}
+                        </button>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span>${categoryIcons[wish.category] || '💕'}</span>
+                                <h4 class="wish-title text-rose-600 font-medium">${wish.text}</h4>
+                            </div>
+                        </div>
+                        <button onclick="deleteWish(${wish.id})" 
+                                class="text-rose-300 hover:text-rose-500 transition-colors">
+                            ✕
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const total = wishes.length;
+            const completed = wishes.filter(w => w.completed).length;
+            const percent = total > 0 ? (completed / total) * 100 : 0;
+            
+            document.getElementById('progressText').textContent = `${completed} / ${total}`;
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        // ========== 相册功能 ==========
+        let photos = JSON.parse(localStorage.getItem('lovePhotos')) || [];
+        
+        function initDefaultPhotos() {
+            photos = [];
+            savePhotos();
+            renderPhotos();
+        }
+        
+        function uploadPhotos(event) {
+            const files = event.target.files;
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photos.unshift({
+                        id: Date.now() + Math.random(),
+                        url: e.target.result,
+                        date: new Date().toLocaleDateString()
+                    });
+                    savePhotos();
+                    renderPhotos();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function savePhotos() {
+            localStorage.setItem('lovePhotos', JSON.stringify(photos));
+        }
+        
+        function renderPhotos() {
+            const container = document.getElementById('photoGallery');
+            container.innerHTML = '';
+            
+            photos.forEach(photo => {
+                const div = document.createElement('div');
+                div.className = 'photo-item aspect-square';
+                div.innerHTML = `<img src="${photo.url}" alt="甜蜜瞬间" onclick="openPhotoModal('${photo.url}')">`;
+                container.appendChild(div);
+            });
+        }
+        
+        function openPhotoModal(url) {
+            document.getElementById('modalImage').src = url;
+            document.getElementById('photoModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('photoModal').classList.remove('active');
+        }
+
+        // ========== 情话墙 ==========
+        let loveWords = JSON.parse(localStorage.getItem('loveWords')) || [];
+        
+        function initDefaultLoveWords() {
+            loveWords = [];
+            saveLoveWords();
+            renderLoveWords();
+        }
+        
+        function addLoveWord() {
+            const input = document.getElementById('loveWordInput');
+            const text = input.value.trim();
+            
+            if (!text) {
+                alert('写点什么再发布吧~');
+                return;
+            }
+            
+            loveWords.unshift({
+                id: Date.now(),
+                text: text,
+                author: '我',
+                time: new Date().toLocaleDateString()
+            });
+            
+            input.value = '';
+            saveLoveWords();
+            renderLoveWords();
+        }
+        
+        function saveLoveWords() {
+            localStorage.setItem('loveWords', JSON.stringify(loveWords));
+        }
+        
+        function renderLoveWords() {
+            const container = document.getElementById('loveWordsList');
+            container.innerHTML = '';
+            
+            loveWords.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'love-card glass-card p-6';
+                card.innerHTML = `
+                    <p class="text-rose-600 text-lg leading-relaxed mb-4 relative z-10">${word.text}</p>
+                    <div class="flex justify-between items-center text-sm text-rose-400">
+                        <span>—— ${word.author}</span>
+                        <span>${word.time}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        const randomLoveWords = [
+            '我喜欢你，不是情话，是心里话。',
+            '想把所有的浪漫都给你。',
+            '你是我疲惫生活里的英雄梦想。',
+            '入目无别人，四下皆是你。',
+            '我想和你，一起度过每一个春夏秋冬。',
+            '你的名字，是我见过最短的情书。',
+            '月亮不会奔向你，但我会。',
+            '世间万般苦，你是一点甜。',
+            '我攒了好久的温柔和浪漫，想要全部都给你。',
+            '你是落日弥漫的橘，天边透亮的星。',
+            '遇见你爱意汹涌，看世间万物都浪漫心动。',
+            '想和你看着落日，只谈微风和晚霞。'
+        ];
+        
+        function showRandomLoveWord() {
+            const text = randomLoveWords[Math.floor(Math.random() * randomLoveWords.length)];
+            document.getElementById('randomLoveWord').textContent = text;
+            document.getElementById('loveWordModal').classList.add('active');
+        }
+        
+        function closeLoveWordModal() {
+            document.getElementById('loveWordModal').classList.remove('active');
+        }
+
+        // ========== 标签页切换 ==========
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('content-' + tabName).classList.add('active');
+        }
+
+        // ========== 导航高亮 ==========
+        window.addEventListener('scroll', function() {
+            const sections = ['home', 'meetday', 'countdown', 'wishes', 'gallery', 'words', 'date'];
+            const scrollPos = window.scrollY + 100;
+            
+            sections.forEach(id => {
+                const section = document.getElementById(id);
+                if (section) {
+                    const top = section.offsetTop;
+                    const height = section.offsetHeight;
+                    
+                    if (scrollPos >= top && scrollPos < top + height) {
+                        document.querySelectorAll('.nav-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        document.querySelector(`a[href="#${id}"]`)?.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // ========== 音乐播放器 ==========
+        const audio = document.getElementById('bgMusic');
+        const player = document.getElementById('musicPlayer');
+        let isPlaying = false;
+        let isCollapsed = false;
+
+        function initMusicPlayer() {
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('loadedmetadata', updateTotalTime);
+            audio.addEventListener('ended', () => {
+                isPlaying = false;
+                updatePlayState();
+            });
+        }
+
+        function uploadMusic(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const url = URL.createObjectURL(file);
+            audio.src = url;
+            document.getElementById('musicName').textContent = file.name;
+            audio.play().then(() => {
+                isPlaying = true;
+                updatePlayState();
+            }).catch(() => {
+                // 浏览器阻止自动播放
+            });
+        }
+
+        function toggleMusic() {
+            if (!audio.src) {
+                alert('先上传一首你们的专属歌曲吧~');
+                return;
+            }
+            
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            isPlaying = !isPlaying;
+            updatePlayState();
+        }
+
+        // 更新播放状态（旋转+按钮）
+        function updatePlayState() {
+            const btn = document.getElementById('playBtn');
+            
+            if (isPlaying) {
+                btn.textContent = '⏸️';
+                player.classList.add('playing');
+            } else {
+                btn.textContent = '▶️';
+                player.classList.remove('playing');
+            }
+        }
+
+        function updateProgress() {
+            const progress = (audio.currentTime / audio.duration) * 100 || 0;
+            document.getElementById('musicProgress').value = progress;
+            
+            const minutes = Math.floor(audio.currentTime / 60);
+            const seconds = Math.floor(audio.currentTime % 60);
+            document.getElementById('currentTime').textContent = 
+                minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+        }
+
+        function updateTotalTime() {
+            const minutes = Math.floor(audio.duration / 60);
+            const seconds = Math.floor(audio.duration % 60);
+            document.getElementById('totalTime').textContent = 
+                minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+        }
+
+        function seekMusic(value) {
+            if (!audio.duration) return;
+            audio.currentTime = (value / 100) * audio.duration;
+        }
+
+        function toggleMusicPanel() {
+            const controls = document.getElementById('musicControls');
+            isCollapsed = !isCollapsed;
+            
+            if (isCollapsed) {
+                player.classList.add('collapsed');
+                controls.style.display = 'none';
+            } else {
+                player.classList.remove('collapsed');
+                controls.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
